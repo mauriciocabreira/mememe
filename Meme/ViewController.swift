@@ -4,18 +4,7 @@
 //
 //  Created by Mauricio A Cabreira on 22/05/17.
 //  Copyright © 2017 Mauricio A Cabreira. All rights reserved.
-// TODO: 
-/*
-
- select the image and show it in the VC
- share button
- 
- 
- 
- 
- 
- */
-
+// 
 import UIKit
 
 
@@ -33,13 +22,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     var clearTopField = true
     var clearBottomField = true
+    
+    
     let memeTextAttributes:[String:Any] = [
         NSStrokeColorAttributeName: UIColor.black,
         NSForegroundColorAttributeName: UIColor.white,
         NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
         NSStrokeWidthAttributeName: -3]
+
   
-    
     
     // MARK: Outlets
     
@@ -155,27 +146,23 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func resetStatus() {
         
+        
+        // Reset Labels to original state
+        topText.text = "TOP"
+        bottomText.text = "BOTTOM"
+        
+        topText.defaultTextAttributes = memeTextAttributes
+        bottomText.defaultTextAttributes = memeTextAttributes
         topText.textAlignment = .center
         bottomText.textAlignment = .center
-        
-        topText.text = "TOP"
-        //topText.placeholder = "TOP"
-        bottomText.text = "BOTTOM"
-        //bottomText.placeholder = "BOTTOM"
-
-        
-        let topAttrString = NSAttributedString(string: topText.text!, attributes: memeTextAttributes)
-        topText.attributedText = topAttrString
-        
-        let bottomAttrString = NSAttributedString(string: bottomText.text!, attributes: memeTextAttributes)
-        bottomText.attributedText = bottomAttrString
-        
-        shareButton.isEnabled = false
-        rawImage.image = nil
-        
         clearTopField = true
         clearBottomField = true
         
+        //Disable share button
+        shareButton.isEnabled = false
+        
+        //Clean image
+        rawImage.image = nil
     }
     
     func keyboardWillShow(_ notification:Notification) {
@@ -209,9 +196,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             rawImage.image = image
             rawImage.contentMode = UIViewContentMode.scaleAspectFit
-            //the line below stratches the image, and changes its aspect
-            //rawImage.contentMode = UIViewContentMode.scaleToFill
-            
             dismiss(animated: true, completion: nil)
             shareButton.isEnabled = true
         }
@@ -226,7 +210,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func generateMemedImage() -> UIImage {
         
-        //Hide navigation and toolbars
+        //Hide navigation and toolbars so they dont apper in the rendered image
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.navigationController?.setToolbarHidden(true, animated: true)
         
@@ -237,6 +221,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
+        // Put bars back
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         self.navigationController?.setToolbarHidden(false, animated: true)
         
@@ -247,19 +232,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     // MARK: Delegates
     
-    
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         
         if topText.isFirstResponder {
+            
+            //If field has the original text, clean it, otherwise keep the already edited text
             if clearTopField {
-                print("about to reset top filed")
                 clearTopField = false
                 textField.text = ""
-                print("top field reseted")
             }
         }
         if bottomText.isFirstResponder {
+            
+            //If field has the original text, clean it, otherwise keep the already edited text
             if clearBottomField {
                 clearBottomField = false
                 textField.text = ""
@@ -269,6 +254,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        //Dismiss the keyboard
         textField.resignFirstResponder()
         
         return true;
