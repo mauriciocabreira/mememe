@@ -12,6 +12,7 @@
 		711FAB9A1ED39E350079AD96 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 711FAB981ED39E350079AD96 /* Main.storyboard */; };
 		711FAB9C1ED39E350079AD96 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 711FAB9B1ED39E350079AD96 /* Assets.xcassets */; };
 		711FAB9F1ED39E350079AD96 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 711FAB9D1ED39E350079AD96 /* LaunchScreen.storyboard */; };
+		711FABAB1ED6223B0079AD96 /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711FABAA1ED6223A0079AD96 /* DataStructures.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		711FAB9B1ED39E350079AD96 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		711FAB9E1ED39E350079AD96 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		711FABA01ED39E350079AD96 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		711FABAA1ED6223A0079AD96 /* DataStructures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			children = (
 				711FAB941ED39E350079AD96 /* AppDelegate.swift */,
 				711FAB961ED39E350079AD96 /* ViewController.swift */,
+				711FABAA1ED6223A0079AD96 /* DataStructures.swift */,
 				711FAB981ED39E350079AD96 /* Main.storyboard */,
 				711FAB9B1ED39E350079AD96 /* Assets.xcassets */,
 				711FAB9D1ED39E350079AD96 /* LaunchScreen.storyboard */,
@@ -137,6 +140,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				711FABAB1ED6223B0079AD96 /* DataStructures.swift in Sources */,
 				711FAB971ED39E350079AD96 /* ViewController.swift in Sources */,
 				711FAB951ED39E350079AD96 /* AppDelegate.swift in Sources */,
 			);

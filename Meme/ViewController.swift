@@ -4,19 +4,10 @@
 //
 //  Created by Mauricio A Cabreira on 22/05/17.
 //  Copyright © 2017 Mauricio A Cabreira. All rights reserved.
-// 
+//
 import UIKit
 
-
-
-struct Meme {
-    var topText: String!
-    var bottomText: String!
-    var originalImage: UIImage!
-    var memedImage: UIImage
-}
-
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class ViewController: UIViewController, UINavigationControllerDelegate {
     
     // MARK: Properties
     
@@ -52,8 +43,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         self.topText.delegate = self
         self.bottomText.delegate = self
         
+        //Put app into initial status
         resetStatus()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,7 +53,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
         
-        //This line does not show the tool and nav bars...
+        //This line hides the tool and nav bars...
         self.toolBar.isHidden = false
         self.navigationBar.isHidden = false
 
@@ -81,6 +72,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //User hit cancel, return to original state: no image, default text.
     @IBAction func cancelMeme(_ sender: Any) {
         
+        //Put app into initial status
         resetStatus()
     
     }
@@ -89,32 +81,29 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBAction func exportMeme(_ sender: Any) {
         
         // Create the meme
-        
-        //arrumar bug aqui que dá quando clica exportar sem ter carregado imagem.
         let memedImage = generateMemedImage()
         let meme = Meme(topText: topText.text!, bottomText: bottomText.text!, originalImage: rawImage.image!, memedImage: memedImage)
         let controller = UIActivityViewController(activityItems: [meme.memedImage], applicationActivities: nil)
             self.present(controller, animated: true, completion: nil)
+        
+        controller.completionWithItemsHandler = {
+            (activityType, complete, returnedItems, activityError ) in
+            
+            if complete {
+                self.save()
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
+        
     }
     
     
     @IBAction func pickAnImageFromAlbum(_ sender: Any) {
-        
-        let pickerController = UIImagePickerController()
-        pickerController.delegate =  self
-        present(pickerController, animated: true, completion: nil)
-        
-        self.toolBar.isHidden = false
-        self.navigationBar.isHidden = false
-
+        pickAnImageFrom(.photoLibrary)
     }
 
     @IBAction func pickAnImageFromCamera(_ sender: Any) {
-
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .camera
-        present(imagePicker, animated: true, completion: nil)
+        pickAnImageFrom(.camera)
     }
     
     
@@ -146,10 +135,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func resetStatus() {
         
-        
-        // Reset Labels to original state
-        topText.text = "TOP"
-        bottomText.text = "BOTTOM"
+                // Reset Labels to original state
+        configureTextField(topText, "TOP")
+        configureTextField(bottomText, "BOTTOM")
         
         topText.defaultTextAttributes = memeTextAttributes
         bottomText.defaultTextAttributes = memeTextAttributes
@@ -189,24 +177,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     
     
-    //MARK: Image related functions
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            rawImage.image = image
-            rawImage.contentMode = UIViewContentMode.scaleAspectFit
-            dismiss(animated: true, completion: nil)
-            shareButton.isEnabled = true
-        }
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
-        shareButton.isEnabled = false
-        
-    }
-    
+  
     
     func generateMemedImage() -> UIImage {
         
@@ -229,38 +200,84 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return memedImage
     }
     
+    func save() {
+        //empty function to be used in Meme2.0
+    }
+ }
+
+
+//MARK: Image related functions
+
+extension ViewController: UIImagePickerControllerDelegate {
+
+    func pickAnImageFrom(_ source: ImageSource) {
+        
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        if source == ImageSource.camera {
+            imagePicker.sourceType = .camera
+        }
+        present(imagePicker, animated: true, completion: nil)
+
+    }
     
-    // MARK: Delegates
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            rawImage.image = image
+            rawImage.contentMode = UIViewContentMode.scaleAspectFit
+            dismiss(animated: true, completion: nil)
+            shareButton.isEnabled = true
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+        shareButton.isEnabled = false
+        
+    }
+}
+
+
+ // MARK: UITextFieldDelegate delegates
+extension ViewController: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        
         
         if topText.isFirstResponder {
             
             //If field has the original text, clean it, otherwise keep the already edited text
             if clearTopField {
                 clearTopField = false
-                textField.text = ""
-            }
+                cleanTextField(textField)
+                }
         }
         if bottomText.isFirstResponder {
             
             //If field has the original text, clean it, otherwise keep the already edited text
             if clearBottomField {
                 clearBottomField = false
-                textField.text = ""
+                cleanTextField(textField)
             }
         }
-
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         //Dismiss the keyboard
         textField.resignFirstResponder()
         
-        return true;
+        return true
     }
-
-
     
+    
+    func configureTextField(_ textField: UITextField, _ text: String) {
+        textField.text = text
+    }
+    
+    func cleanTextField(_ textField: UITextField) {
+       
+        textField.text = ""
+    }
 }
 
